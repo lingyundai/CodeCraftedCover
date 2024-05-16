@@ -2,6 +2,7 @@ from snowflake.snowpark import Session
 import streamlit as st
 from snowflake.cortex import Complete, ExtractAnswer, Sentiment, Summarize, Translate
 
+# Create a new session with Snowflake
 connection_parameters = {
     "account": "zyb91762.us-east-1",
     "user": "AKUMAR37",
@@ -9,18 +10,18 @@ connection_parameters = {
   }  
 
 new_session = Session.builder.configs(connection_parameters).create()
+# End of snippet
 
 
-
-st.title('Chat with models in Snowflake Cortex', anchor=False)
-
-# Instructions appended to every chat, and always used 
-instructions = "Be concise. Do not hallucinate"
-
+#---------------------------------------------------------------------#
+# Path: Ankit_Experiments.py
+# Application to write the cover letter
+#---------------------------------------------------------------------#
+st.title('Cover letter Generator', anchor=False)
+st.sidebar.title('Cover letter Generator')
 # Choose a Cortex model
-model = st.selectbox("Choose a model", 
+model = st.sidebar.selectbox("Choose a model", 
                      [
-                         'snowflake-arctic',
                          'mistral-large',
                          'reka-flash',
                          'llama2-70b-chat', 
@@ -28,6 +29,11 @@ model = st.selectbox("Choose a model",
                          'mistral-7b',
                     ]
 )
+st.sidebar.file_uploader("Upload your resume", type=['pdf'])
+# Instructions appended to every chat, and always used 
+instructions = "Be concise. Do not hallucinate"
+
+
 
 # Initialize message history in session state
 if "messages" not in st.session_state:
