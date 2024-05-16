@@ -71,3 +71,8 @@ def db_connect_error(error):
 
 def db_connect_success():
     st.sidebar.caption("Successfully Connected!")
+
+def generate_button():
+    # Use columns to keep button to the right of the side bar
+    col1, col2 = st.sidebar.columns([0.7, 0.4])
+    col2.button("Ready to Generate ➡️")

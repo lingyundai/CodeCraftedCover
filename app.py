@@ -34,6 +34,7 @@ with col1:
         cp.job_description_input()
         cp.addtional_info_input()
         cp.file_history(st.session_state["file_history"], job_type)
+        cp.generate_button()
     # There is error on db connection
     elif not new_session and error:
         cp.db_connect_error(error)
