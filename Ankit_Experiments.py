@@ -1,6 +1,10 @@
 from snowflake.snowpark import Session
+import pandas as pd
+from io import StringIO, BytesIO
+from PyPDF2 import PdfReader
 import streamlit as st
 from snowflake.cortex import Complete, ExtractAnswer, Sentiment, Summarize, Translate
+from docx import Document
 
 # Create a new session with Snowflake
 connection_parameters = {
@@ -29,17 +33,39 @@ model = st.sidebar.selectbox("Choose a model",
                          'mistral-7b',
                     ]
 )
-st.sidebar.file_uploader("Upload your resume", type=['pdf'])
+uploaded_file = st.sidebar.file_uploader("Upload your resume in pdf", type=['pdf','docx'], accept_multiple_files=True)
+# for uploaded_file in uploaded_file:
+#     st.write("filename:", uploaded_file.name)
 # Instructions appended to every chat, and always used 
 instructions = "Be concise. Do not hallucinate"
 
+if uploaded_file is not None:
+    for file in uploaded_file:
+        # To read file as bytes:
+        bytes_data = file.read()
 
+        if file.type == 'application/pdf':
+            # Handle PDF files
+            reader = PdfReader(BytesIO(bytes_data))
+            text = []
+            for page in reader.pages:
+                text.append(page.extract_text())
+            st.write(' '.join(text))
+        elif file.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+            # Handle DOCX files
+            doc = Document(BytesIO(bytes_data))
+            text = []
+            for para in doc.paragraphs:
+                text.append(para.text)
+            st.write(' '.join(text))
+        else:
+            st.write("Unsupported file type")
 
 # Initialize message history in session state
 if "messages" not in st.session_state:
     st.session_state["messages"] = [
         {
-            'role': 'assistant',
+            'role': 'Alex',
             'content': 'how can I help?'
         }
     ]
