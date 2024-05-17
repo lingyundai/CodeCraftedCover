@@ -1,4 +1,6 @@
 from snowflake.snowpark import Session
+import snowflake.connector as snconn
+
 
 def connection(account, username, password):
     # intialize new session and error
@@ -18,3 +20,15 @@ def connection(account, username, password):
         error = str(e)
     
     return new_session, error
+
+def databaseConnection(username, password, account):
+    if (username and password and account):
+    # Create a connection object
+        con = snconn.connect(
+            user=username,
+            password=password,
+            account=account,
+            warehouse="COMPUTE_WH",
+            role="ACCOUNTADMIN"
+        )
+        return con
