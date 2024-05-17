@@ -59,7 +59,7 @@ with col2:
 #     with st.chat_message(message["role"]):
 #         st.markdown(message["content"])
 
-
+#
 # prompt = st.chat_input("Type your message")
 
 # # if user entered message, append value to current session
