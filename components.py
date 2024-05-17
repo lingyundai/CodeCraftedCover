@@ -39,7 +39,8 @@ def connection_parameters_input():
                                     help="One of the Snowflake commercial regions, besides us-east as our LLM is not currently avaliable in those regions.")
     username = st.sidebar.text_input('Enter Snowflake Username', placeholder="Your Snowflake username")
     password = st.sidebar.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password')
-    return account, username, password
+    submit = st.sidebar.button("Connect")
+    return account, username, password, submit
 
 def job_type_select(session_state):
     job_type = st.sidebar.selectbox(
