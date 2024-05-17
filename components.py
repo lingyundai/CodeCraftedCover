@@ -1,4 +1,13 @@
 import streamlit as st
+from dbConnection import databaseConnection
+from dbOperation import create_database, switch_database, create_table, insert_data, fetch_data
+import pandas as pd
+from io import StringIO, BytesIO
+from PyPDF2 import PdfReader
+from docx import Document
+import constants as const
+
+
 
 def title():
     st.title("Generate Cover Letter", anchor=False)
@@ -16,11 +25,43 @@ def app_introduction():
     st.caption("In the end, we are in this together. Happy generating!")
 
 
-def file_upload():
-    st.sidebar.file_uploader("Upload Files", 
+def file_upload(job_type):
+    print(st.session_state)
+    text = []
+    uploaded_file = st.sidebar.file_uploader("Upload Files", 
                              type=["pdf", "docx"], 
                              help="Any file that you think would help us to generate a accurate cover letter for you",
                              accept_multiple_files=True)
+    if uploaded_file is not None:
+        text = []  # Initialize text as an empty list
+        for file in uploaded_file:
+            # To read file as bytes:
+            bytes_data = file.read()
+            file_content = ''  # Initialize file_content as an empty string
+
+            if file.type == 'application/pdf':
+                # Handle PDF files
+                reader = PdfReader(BytesIO(bytes_data))
+                for page in reader.pages:
+                    file_content += page.extract_text() + ' '
+            elif file.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                # Handle DOCX files
+                doc = Document(BytesIO(bytes_data))
+                for para in doc.paragraphs:
+                    file_content += para.text + ' '
+
+            # Append a dictionary with the filename and file content to the text list
+            text.append([{'file_name': file.name, 'file_content': file_content.strip()}])
+            # print(text)
+    
+    con = databaseConnection(st.session_state.username, st.session_state.password , st.session_state.account)
+    cur = con.cursor()
+    switch_database(cur, 'USERDB')
+    table_name = job_type.replace(' ', '_')
+    create_table(cur, table_name)
+    for data in text:
+        insert_data(cur, table_name, data)
+    con.close()
 
 def job_description_input():
     st.sidebar.text_area("Enter Job Description", 
@@ -36,16 +77,16 @@ def submit_button():
 def connection_parameters_input():
     account = st.sidebar.text_input('Enter Snowflake Account', 
                                     placeholder="Your Snowflake account",
-                                    help="One of the Snowflake commercial regions, besides us-east as our LLM is not currently avaliable in those regions.")
-    username = st.sidebar.text_input('Enter Snowflake Username', placeholder="Your Snowflake username")
-    password = st.sidebar.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password')
+                                    help="One of the Snowflake commercial regions, besides us-east as our LLM is not currently avaliable in those regions." ,value = st.secrets["account"])
+    username = st.sidebar.text_input('Enter Snowflake Username', placeholder="Your Snowflake username" ,value = st.secrets["username"])
+    password = st.sidebar.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password', value = st.secrets["password"])
     submit = st.sidebar.button("Connect")
     return account, username, password, submit
 
-def job_type_select(session_state):
+def job_type_select(job_type_list):
     job_type = st.sidebar.selectbox(
         "Select Job Type", 
-        list(session_state.keys()),
+        job_type_list.values(),
         help="This will help us to create designated chats for you.")
     return job_type
 
@@ -70,8 +111,24 @@ def file_history(session_state, job_type):
 def db_connect_error(error):
     st.sidebar.caption(f"{error}")
 
-def db_connect_success():
+def db_connect_success(username, password, account):
     st.sidebar.caption("Successfully Connected!")
+    if (username and password and account):
+        # Connect to the database
+        con = databaseConnection(username, password, account)
+
+        # Create a cursor object
+        cur = con.cursor()
+
+        # Perform operations on the database
+        create_database(cur, 'userDB')
+        switch_database(cur, 'userDB')
+        # create_table(cur)
+        # insert_data(cur, account, username, password)
+        # fetch_data(cur)
+
+        # Close the connection
+        con.close()
 
 def generate_button():
     # Use columns to keep button to the right of the side bar
