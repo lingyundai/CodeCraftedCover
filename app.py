@@ -16,28 +16,39 @@ job_file_history_map = {
     const.TEST_ENGINEER: [],
 }
 
+# Initialize keys in session state
 if "file_history" not in st.session_state:
     st.session_state["file_history"] = job_file_history_map.copy()
+
+if "db_connection" not in st.session_state:
+    st.session_state["db_connection"] = False
 
 # Side bar and main area
 col1, col2 = st.columns([1, 3]) 
 
 # Components that go into the left side bar
 with col1:
-    account, username, password = cp.connection_parameters_input()
-    new_session, error = conn.connection(account, username, password)
-    # Uer entered correct info
-    if new_session and not error:
-        cp.db_connect_success()
+    account, username, password, submit = cp.connection_parameters_input()
+    # Only when submit is clicked, move on to other view
+    if submit:
+        new_session, error = conn.connection(account, username, password)
+        # Uer entered correct info
+        if new_session and not error:
+            # Key value set db_connection to true in session state
+            st.session_state["db_connection"] = True
+            cp.db_connect_success()
+        # There is error on db connection
+        elif not new_session and error:
+            st.session_state["db_connection"] = False
+            cp.db_connect_error(error)
+    
+    if st.session_state["db_connection"] == True:
         job_type = cp.job_type_select(st.session_state["file_history"])
         cp.file_upload()
         cp.job_description_input()
         cp.addtional_info_input()
         cp.file_history(st.session_state["file_history"], job_type)
         cp.generate_button()
-    # There is error on db connection
-    elif not new_session and error:
-        cp.db_connect_error(error)
 
 # Components that go into the main area
 with col2:
