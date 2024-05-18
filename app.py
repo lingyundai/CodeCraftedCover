@@ -1,20 +1,8 @@
 import streamlit as st
 from snowflake.cortex import Complete, ExtractAnswer, Sentiment, Summarize, Translate
 import components as cp
-import constants as const
 import dbConnection as conn
-
-
-job_file_history_map = {
-    const.SOFTWARE_ENGINEER: [],
-    const.MACHINE_LEARNING_ENGINEER: [],
-    const.DATA_SCIENTIST: ["temp_ds_xxxx.pdf", "temp1_ds_xxxxxxxxx.docx"],
-    const.DATA_ANALYST: [],
-    const.DATA_ENGINEER: [],
-    const.PRODUCT_MANAGER: [],
-    const.PROJECT_MANAGER: ["temp_Proj_new.pdf"],
-    const.TEST_ENGINEER: [],
-}
+import extra_streamlit_components as stx
 
 Job_type_list = { "SWE" : 'Software Engineer', "MLE" : 'Machine Learning Engineer', "DS": 'Data Scientist', "DA": 'Data Analyst'}
 

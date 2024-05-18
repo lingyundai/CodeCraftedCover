@@ -5,7 +5,6 @@ import pandas as pd
 from io import StringIO, BytesIO
 from PyPDF2 import PdfReader
 from docx import Document
-import constants as const
 
 
 
@@ -143,7 +142,7 @@ def db_connect_success(username, password, account):
 def generate_button():
     # Use columns to keep button to the right of the side bar
     col1, col2 = st.sidebar.columns([0.7, 0.4])
-    col2.button("Ready to Generate ➡️")
+    col2.button("Ready to Generate  ➡️")
 
 def getfile_Content():
     # st.write(st.session_state.data)
