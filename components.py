@@ -64,7 +64,7 @@ def file_upload(job_type):
 def show_uploaded_files(cur, table_name):
     # Fetch all data from the table
     st.session_state.data = dbOps.fetch_data(cur, table_name)
-    print(st.session_state.data)
+    # print(st.session_state.data)
     # Display the filenames
     filenames = [row[0] for row in st.session_state.data]
     # print(filenames)
