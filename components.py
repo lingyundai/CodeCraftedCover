@@ -1,6 +1,6 @@
 import streamlit as st
-from dbConnection import databaseConnection
-from dbOperation import create_database, switch_database, create_table, insert_data, fetch_data
+import dbConnection as dbConn
+import dbOperation as dbOps 
 import pandas as pd
 from io import StringIO, BytesIO
 from PyPDF2 import PdfReader
@@ -26,7 +26,6 @@ def app_introduction():
 
 
 def file_upload(job_type):
-    print(st.session_state)
     text = []
     uploaded_file = st.sidebar.file_uploader("Upload Files", 
                              type=["pdf", "docx"], 
@@ -52,20 +51,35 @@ def file_upload(job_type):
 
             # Append a dictionary with the filename and file content to the text list
             text.append([{'file_name': file.name, 'file_content': file_content.strip()}])
-            # print(text)
     
-    con = databaseConnection(st.session_state.username, st.session_state.password , st.session_state.account)
+    con = dbConn.databaseConnection(st.session_state.username, st.session_state.password , st.session_state.account)
     cur = con.cursor()
-    switch_database(cur, 'USERDB')
+    dbOps.switch_database(cur, 'USERDB')
     table_name = job_type.replace(' ', '_')
-    create_table(cur, table_name)
+    dbOps.create_table(cur, table_name)
     for data in text:
-        insert_data(cur, table_name, data)
-    con.close()
+        dbOps.insert_data(cur, table_name, data)
+    show_uploaded_files(cur, table_name)
+
+def show_uploaded_files(cur, table_name):
+    # Fetch all data from the table
+    st.session_state.data = dbOps.fetch_data(cur, table_name)
+    print(st.session_state.data)
+    # Display the filenames
+    filenames = [row[0] for row in st.session_state.data]
+    # print(filenames)
+    st.sidebar.write("Click on the file name to delete it.")
+    for i, filename in enumerate(filenames):
+        if st.sidebar.button(filename):
+            dbOps.delete_file(cur, table_name, filename)
+            # re-render
+            st.rerun()
 
 def job_description_input():
     st.sidebar.text_area("Enter Job Description", 
                          placeholder="Copy-and-paste the job description, the more information the better!")
+    if st.sidebar.button("Submit"):
+        st.sidebar.caption("Successfully Submitted!")
 
 def addtional_info_input():
     st.sidebar.text_area("Anything Else That Would Help?", 
@@ -115,18 +129,14 @@ def db_connect_success(username, password, account):
     st.sidebar.caption("Successfully Connected!")
     if (username and password and account):
         # Connect to the database
-        con = databaseConnection(username, password, account)
+        con = dbConn.databaseConnection(username, password, account)
 
         # Create a cursor object
         cur = con.cursor()
 
         # Perform operations on the database
-        create_database(cur, 'userDB')
-        switch_database(cur, 'userDB')
-        # create_table(cur)
-        # insert_data(cur, account, username, password)
-        # fetch_data(cur)
-
+        dbOps.create_database(cur, 'userDB')
+        dbOps.switch_database(cur, 'userDB')
         # Close the connection
         con.close()
 
@@ -134,3 +144,11 @@ def generate_button():
     # Use columns to keep button to the right of the side bar
     col1, col2 = st.sidebar.columns([0.7, 0.4])
     col2.button("Ready to Generate ➡️")
+
+def getfile_Content():
+    # st.write(st.session_state.data)
+    if len(st.session_state.data) > 0:
+        for row in st.session_state.data:
+            st.write(row[1])
+    else:
+        st.write("")
