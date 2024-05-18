@@ -25,8 +25,14 @@ Job_type_list = { "SWE" : 'Software Engineer', "MLE" : 'Machine Learning Enginee
 if "db_connection" not in st.session_state:
     st.session_state["db_connection"] = False
 
-if "Job_type" not in st.session_state:
-    st.session_state["Job_type"] = Job_type_list.copy()
+if "Job_type_list" not in st.session_state:
+    st.session_state["Job_type_list"] = Job_type_list.copy()
+
+if "job_type" not in st.session_state:
+    st.session_state["job_type"] = None
+
+if "data" not in st.session_state:
+    st.session_state.data = []
 
 # Side bar and main area
 col1, col2 = st.columns([1, 3]) 
@@ -53,8 +59,8 @@ with col1:
             cp.db_connect_error(error)
     
     if st.session_state["db_connection"] == True:
-        job_type = cp.job_type_select(st.session_state.Job_type)
-        cp.file_upload(job_type)
+        st.session_state.job_type= cp.job_type_select(st.session_state.Job_type_list)
+        cp.file_upload(st.session_state.job_type)
         cp.job_description_input()
         cp.addtional_info_input()
         # cp.file_history(st.session_state["file_history"], job_type)
@@ -62,8 +68,9 @@ with col1:
 
 # Components that go into the main area
 with col2:
-    cp.title()
-    cp.app_introduction()
+    # cp.title()
+    # cp.app_introduction()
+    cp.getfile_Content()
 
 
 # # Check if message key is already in the session state
