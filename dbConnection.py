@@ -15,7 +15,6 @@ def connection(account, username, password):
         if account and username and password:
             new_session = Session.builder.configs(connection_parameters).create()
             print("New session created successfully!")
-            print(new_session)
     except Exception as e:
         error = str(e)
     
