@@ -1,11 +1,10 @@
 import streamlit as st
-import dbConnection as dbConn
-import dbOperation as dbOps 
+
 import pandas as pd
 from io import StringIO, BytesIO
 from PyPDF2 import PdfReader
 from docx import Document
-
+import snowflake.cortex as cortex 
 
 
 def title():
@@ -23,56 +22,23 @@ def app_introduction():
     st.caption("3. Chat GPT? NO! We use the newest LLM technology 'Snowflake Arctic' that generates high-quality models.")
     st.caption("In the end, we are in this together. Happy generating!")
 
+def connection_parameters_input():
+    account = st.sidebar.text_input('Enter Snowflake Account', 
+                                    placeholder="Your Snowflake account",
+                                    help="One of the Snowflake commercial regions, besides us-east as our LLM is not currently avaliable in those regions." ,value = st.secrets["account"])
+    username = st.sidebar.text_input('Enter Snowflake Username', placeholder="Your Snowflake username" ,value = st.secrets["username"])
+    password = st.sidebar.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password', value = st.secrets["password"])
+    submit = st.sidebar.button("Connect")
+    return account, username, password, submit
 
-def file_upload(job_type):
-    text = []
-    uploaded_file = st.sidebar.file_uploader("Upload Files", 
-                             type=["pdf", "docx"], 
-                             help="Any file that you think would help us to generate a accurate cover letter for you",
-                             accept_multiple_files=True)
-    if uploaded_file is not None:
-        text = []  # Initialize text as an empty list
-        for file in uploaded_file:
-            # To read file as bytes:
-            bytes_data = file.read()
-            file_content = ''  # Initialize file_content as an empty string
 
-            if file.type == 'application/pdf':
-                # Handle PDF files
-                reader = PdfReader(BytesIO(bytes_data))
-                for page in reader.pages:
-                    file_content += page.extract_text() + ' '
-            elif file.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-                # Handle DOCX files
-                doc = Document(BytesIO(bytes_data))
-                for para in doc.paragraphs:
-                    file_content += para.text + ' '
+def job_type_select(job_type_list):
+    job_type = st.sidebar.selectbox(
+        "Select Job Type", 
+        job_type_list.values(),
+        help="This will help us to create designated chats for you.")
+    return job_type
 
-            # Append a dictionary with the filename and file content to the text list
-            text.append([{'file_name': file.name, 'file_content': file_content.strip()}])
-    
-    con = dbConn.databaseConnection(st.session_state.username, st.session_state.password , st.session_state.account)
-    cur = con.cursor()
-    dbOps.switch_database(cur, 'USERDB')
-    table_name = job_type.replace(' ', '_')
-    dbOps.create_table(cur, table_name)
-    for data in text:
-        dbOps.insert_data(cur, table_name, data)
-    show_uploaded_files(cur, table_name)
-
-def show_uploaded_files(cur, table_name):
-    # Fetch all data from the table
-    st.session_state.data = dbOps.fetch_data(cur, table_name)
-    # print(st.session_state.data)
-    # Display the filenames
-    filenames = [row[0] for row in st.session_state.data]
-    # print(filenames)
-    st.sidebar.write("Click on the file name to delete it.")
-    for i, filename in enumerate(filenames):
-        if st.sidebar.button(filename):
-            dbOps.delete_file(cur, table_name, filename)
-            # re-render
-            st.rerun()
 
 def job_description_input():
     st.sidebar.text_area("Enter Job Description", 
@@ -84,70 +50,42 @@ def addtional_info_input():
     st.sidebar.text_area("Anything Else That Would Help?", 
                  placeholder="For example, 'please do not copy and paste things from job description to the cover letter!' or 'I am also experienced in xxx'.")
 
-def submit_button():
-    st.button("Generate")
-
-def connection_parameters_input():
-    account = st.sidebar.text_input('Enter Snowflake Account', 
-                                    placeholder="Your Snowflake account",
-                                    help="One of the Snowflake commercial regions, besides us-east as our LLM is not currently avaliable in those regions." ,value = st.secrets["account"])
-    username = st.sidebar.text_input('Enter Snowflake Username', placeholder="Your Snowflake username" ,value = st.secrets["username"])
-    password = st.sidebar.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password', value = st.secrets["password"])
-    submit = st.sidebar.button("Connect")
-    return account, username, password, submit
-
-def job_type_select(job_type_list):
-    job_type = st.sidebar.selectbox(
-        "Select Job Type", 
-        job_type_list.values(),
-        help="This will help us to create designated chats for you.")
-    return job_type
-
-def file_history(session_state, job_type):
-    # Get the file history for the selected job type
-    job_file_history = session_state.get(job_type, [])
-    st.sidebar.write(f"File History For {job_type} Position:")
-    # Display text based on if file history is empty
-    if len(job_file_history) == 0:
-        st.sidebar.write("No File Found")
-    else:
-        for file in job_file_history:
-            # Styling the file and remove button
-            col1, col2 = st.sidebar.columns([0.7, 0.2])
-            col1.write(file)
-            # if file removed remove from session state
-            if col2.button("Remove", key=f"remove_{file}"):
-                session_state[job_type].remove(file)
-                # re-render
-                st.rerun() 
-
-def db_connect_error(error):
-    st.sidebar.caption(f"{error}")
-
-def db_connect_success(username, password, account):
-    st.sidebar.caption("Successfully Connected!")
-    if (username and password and account):
-        # Connect to the database
-        con = dbConn.databaseConnection(username, password, account)
-
-        # Create a cursor object
-        cur = con.cursor()
-
-        # Perform operations on the database
-        dbOps.create_database(cur, 'userDB')
-        dbOps.switch_database(cur, 'userDB')
-        # Close the connection
-        con.close()
-
 def generate_button():
     # Use columns to keep button to the right of the side bar
     col1, col2 = st.sidebar.columns([0.7, 0.4])
     col2.button("Ready to Generate  ➡️")
 
-def getfile_Content():
-    # st.write(st.session_state.data)
-    if len(st.session_state.data) > 0:
-        for row in st.session_state.data:
-            st.write(row[1])
-    else:
-        st.write("")
+def chatbot():
+    instructions = "Be concise. Do not hallucinate"
+
+    # Initialize message history in session state
+    if "messages" not in st.session_state:
+        st.session_state["messages"] = [
+            {
+                'role': 'assistant',
+                'content': st.session_state.fetched_data if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
+            }
+        ]
+    # User input prompt
+    prompt = st.chat_input("Type your message", key="chat_input")
+
+    if prompt:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant"):  
+            context = ",".join(f"role:{message['role']} content:{message['content']}" for message in st.session_state.messages)
+            response = cortex.Complete('mistral-large', f"Instructions:{instructions}, context:{context}, Prompt:{prompt}",session = st.session_state.new_session)
+            st.markdown(response)
+
+            st.session_state.messages.append({
+                'role': 'assistant',
+                'content': response
+            })
+
+
+        # Scroll to the last message
+        st.write('<meta name="viewport" content="width=device-width, initial-scale=1">', unsafe_allow_html=True)
+        st.write('<script>var element = document.body; element.scrollTop = element.scrollHeight;</script>', unsafe_allow_html=True)
