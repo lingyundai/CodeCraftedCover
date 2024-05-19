@@ -13,5 +13,8 @@
   "username": null,
   "password": null,
   "account": null,
-  "database_conn_token": null
+  "database_conn_token": null,
+  "Job_desc": null,
+  "addition_info": null,
+  "isFirstPrompt": false
 }
