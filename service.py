@@ -108,9 +108,9 @@ def user_sign_in():
 
     # Only when submit is clicked, move on to other view
     if submit:
-        st.session_state_new_session, error = dbConn.connection(account, username, password)
+        st.session_state.new_session, error = dbConn.connection(account, username, password)
         # Uer entered correct info
-        if st.session_state_new_session and not error:
+        if st.session_state.new_session and not error:
             # Key value set db_connection to true in session state 
             Database_connect(username, password, account)
             st.session_state.db_connection = True
