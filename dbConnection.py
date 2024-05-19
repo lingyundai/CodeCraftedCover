@@ -23,12 +23,12 @@ def connection(account, username, password):
 
 def databaseConnection(username, password, account):
     if (username and password and account):
-    # Create a connection object
+        # Create a connection object
         con = snconn.connect(
             user=username,
             password=password,
             account=account,
-            warehouse="COMPUTE_WH",
+            warehouse="HACKATHON",
             role="ACCOUNTADMIN"
         )
         return con

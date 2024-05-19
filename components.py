@@ -2,8 +2,6 @@ import streamlit as st
 import snowflake.cortex as cortex 
 
 
-
-
 def title():
     st.title("Generate Cover Letter", anchor=False)
     st.subheader("That Actually Works.")
@@ -20,12 +18,12 @@ def app_introduction():
     st.caption("In the end, we are in this together. Happy generating!")
 
 def connection_parameters_input():
-    account = st.sidebar.text_input('Enter Snowflake Account', 
+    account = st.text_input('Enter Snowflake Account', 
                                     placeholder="Your Snowflake account",
                                     help="One of the Snowflake commercial regions, besides us-east as our LLM is not currently avaliable in those regions." ,value = st.secrets["account"])
-    username = st.sidebar.text_input('Enter Snowflake Username', placeholder="Your Snowflake username" ,value = st.secrets["username"])
-    password = st.sidebar.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password', value = st.secrets["password"])
-    submit = st.sidebar.button("Connect")
+    username = st.text_input('Enter Snowflake Username', placeholder="Your Snowflake username" ,value = st.secrets["username"])
+    password = st.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password', value = st.secrets["password"])
+    submit = st.button("Connect")
     return account, username, password, submit
 
 
@@ -85,3 +83,19 @@ def chatbot():
         # Scroll to the last message
         st.write('<meta name="viewport" content="width=device-width, initial-scale=1">', unsafe_allow_html=True)
         st.write('<script>var element = document.body; element.scrollTop = element.scrollHeight;</script>', unsafe_allow_html=True)
+
+def file_not_found_error():
+    st.warning("Session state file not found. Starting with an empty session state.")
+
+def json_decode_error():
+    st.error("Error decoding session state file. Starting with an empty session state.")
+
+def connection_establish():
+    st.caption("Successfully Connected!")
+
+def credential_not_valid():
+    st.caption("Please enter valid credentials")
+
+def user_signed_in():
+    st.write(f"Signed in as: {st.session_state.username}")
+    st.button("Sign Out")
