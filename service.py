@@ -5,7 +5,8 @@ from io import StringIO, BytesIO
 from PyPDF2 import PdfReader
 from docx import Document
 import dbConnection as dbConn
-import dbOperation as dbOps 
+import dbOperation as dbOps
+import components as cmpnt
 
 
 # Function to save session state to a file
@@ -17,9 +18,9 @@ def load_session_state_from_json(file_path="state.json"):
             if key not in st.session_state:
                 st.session_state[key] = value
     except FileNotFoundError:
-        st.warning("Session state file not found. Starting with an empty session state.")
+        cmpnt.file_not_found_eror()
     except json.JSONDecodeError:
-        st.error("Error decoding session state file. Starting with an empty session state.")
+        cmpnt.json_decode_error()
 
 def Database_connect(username, password, account):
     if (username and password and account):
@@ -33,11 +34,11 @@ def Database_connect(username, password, account):
         dbOps.switch_database(cur, 'userDB')
         # Close the connection
         # st.session_state.database_conn_token.close()
-        st.sidebar.caption("Successfully Connected!")
+        cmpnt.connection_establish()
         st.session_state.db_connection = True
 
     else:
-        st.sidebar.caption("Please enter valid credentials")
+        cmpnt.credential_not_valid()
         st.session_state.db_connection = False
 
 def file_upload(job_type):
@@ -95,3 +96,22 @@ def getfile_Content():
             st.session_state.fetched_data.append(row[1])
     else:
         st.session_state.fetched_data = []
+
+
+@st.experimental_dialog("User Sign In")
+def user_sign_in():
+    account, username, password, submit = cmpnt.connection_parameters_input()
+    if "username" "password" "account" not in st.session_state:
+        st.session_state.username = username
+        st.session_state.password = password
+        st.session_state.account = account
+
+    # Only when submit is clicked, move on to other view
+    if submit:
+        st.session_state_new_session, error = dbConn.connection(account, username, password)
+        # Uer entered correct info
+        if st.session_state_new_session and not error:
+            # Key value set db_connection to true in session state 
+            Database_connect(username, password, account)
+            st.session_state.db_connection = True
+            st.rerun()
