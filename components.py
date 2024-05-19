@@ -1,9 +1,4 @@
 import streamlit as st
-
-import pandas as pd
-from io import StringIO, BytesIO
-from PyPDF2 import PdfReader
-from docx import Document
 import snowflake.cortex as cortex 
 
 
@@ -39,21 +34,18 @@ def job_type_select(job_type_list):
         help="This will help us to create designated chats for you.")
     return job_type
 
-
-def job_description_input():
-    st.sidebar.text_area("Enter Job Description", 
-                         placeholder="Copy-and-paste the job description, the more information the better!")
-    if st.sidebar.button("Submit"):
-        st.sidebar.caption("Successfully Submitted!")
-
-def addtional_info_input():
-    st.sidebar.text_area("Anything Else That Would Help?", 
-                 placeholder="For example, 'please do not copy and paste things from job description to the cover letter!' or 'I am also experienced in xxx'.")
-
 def generate_button():
-    # Use columns to keep button to the right of the side bar
-    col1, col2 = st.sidebar.columns([0.7, 0.4])
-    col2.button("Ready to Generate  ➡️")
+   with st.form("my_form"):
+        st.session_state.job_description = st.sidebar.text_area("Enter Job Description", placeholder="Copy-and-paste the job description, the more information the better!")
+        st.session_state.addition_info = st.sidebar.text_area("Anything Else That Would Help?", 
+                    placeholder="For example, 'please do not copy and paste things from job description to the cover letter!' or 'I am also experienced in xxx'.")
+        submit = st.sidebar.button("Submit")
+        if submit:
+            if st.session_state.job_description and st.session_state.addition_info and st.session_state.fetched_data:
+                st.sidebar.caption("Successfully Submitted!")
+            else:
+                st.sidebar.caption("Please check if you have atleast uploaded a files, entered job description and additional information.")
+
 
 def chatbot():
     instructions = "Be concise. Do not hallucinate"
@@ -63,7 +55,8 @@ def chatbot():
         st.session_state["messages"] = [
             {
                 'role': 'assistant',
-                'content': st.session_state.fetched_data if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
+                'content': "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
+                # 'content': st.session_state.fetched_data if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
             }
         ]
     # User input prompt
@@ -71,6 +64,7 @@ def chatbot():
 
     if prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})
+        st.session_state.isFirstPrompt = True
 
         with st.chat_message("user"):
             st.markdown(prompt)

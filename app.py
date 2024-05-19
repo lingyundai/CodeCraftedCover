@@ -22,8 +22,6 @@ with col1:
     if st.session_state.db_connection == True:
         st.session_state.job_type= cmpnt.job_type_select(st.session_state.Job_type_list)
         serv.file_upload(st.session_state.job_type)
-        cmpnt.job_description_input()
-        cmpnt.addtional_info_input()
         cmpnt.generate_button()
 
 # Components that go into the main area
