@@ -6,7 +6,6 @@ import pandas as pd
 from io import StringIO, BytesIO
 from PyPDF2 import PdfReader
 from docx import Document
-import constants as const
 import cover_letter_generator as clg
 
 
