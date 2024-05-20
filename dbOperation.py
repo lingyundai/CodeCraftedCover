@@ -1,3 +1,4 @@
+import streamlit as st
 def create_database(cur, db_name):
     # Create a new database
     cur.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
@@ -31,6 +32,7 @@ def insert_data(cur, table_name, data):
             VALUES (%s, %s)
         """, (data[0]['file_name'], data[0]['file_content']))
         print(f"Successfully inserted data into {table_name}")
+        st.rerun()
     except Exception as e:
         print(f"Failed to insert data: {e}")
 

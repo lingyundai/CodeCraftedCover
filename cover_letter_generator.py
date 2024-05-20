@@ -2,24 +2,31 @@ import dbConnection as dbConn
 from snowflake.snowpark import Session
 import streamlit as st
 import snowflake.connector as snconn
+import snowflake.cortex as cortex 
+
 import json
 import snowflake.cortex as cortex 
 
 def chatbot():
     instructions = "Be concise. Do not hallucinate"
-    # st.write(st.session_state.job_description)
-    # st.write(st.session_state.additional_info)
     # Initialize message history in session state
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
             {
                 'role': 'assistant',
-                'content': "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
-                # 'content': st.session_state.fetched_data if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
+                # 'content': "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
+                'content': generate_initial_content() if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
             }
         ]
+    
+    if st.session_state.isGenerated:
+        Generate_CV = "Generate cover letter Based on the uploaded files and provided ", f"Job_description:{st.session_state.job_description} and additional_information:{st.session_state.additional_info}."
+        context = ",".join(f"role:{message['role']} content:{message['content']}" for message in st.session_state.messages)
+        response = cortex.Complete('mistral-large', f"Instructions:{instructions}, context:{context}, Prompt:{Generate_CV}",session = st.session_state.new_session)
+        st.markdown(response)
+
     # User input prompt
-    prompt = st.chat_input("Type your message", key="chat_input")
+    prompt = st.chat_input("If you have any questions or need assistance, please type here.")
 
     if prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})
@@ -44,7 +51,21 @@ def chatbot():
         st.write('<script>var element = document.body; element.scrollTop = element.scrollHeight;</script>', unsafe_allow_html=True)
 
 
-def generate_cover_letter():
+def generate_initial_content():
+    # return "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
+    prompt = [
+    f"Given the applicant's resume and the job description, generate a cover letter that includes the following sections: \n\n"
+    f"1. Personal Profile Building Story: Introduce the applicant and highlight their core strengths and unique qualities. \n\n"
+    f"2. Experience Mapping: Link the applicant's experiences and skills to the job description. Use scenarios to demonstrate impact. \n\n"
+    f"3. Address Gaps: If there are gaps between the resume and job description, acknowledge and explain them. \n\n"
+    f"4. Conclusion: Summarize the applicant's suitability for the role and express enthusiasm for the position. \n\n"
+    f"Resume: {st.session_state.fetched_data}\n\n"
+    f"Job Description: {st.session_state.job_description}\n\n"
+    f"Additional Information: {st.session_state.additional_info}\n\n"
+    f"Cover Letter:"]
+    return prompt
+
+def generate_cover_letter(user_data, job_description, additional_info):
     # # Step 1: Extract relevant details from user data and job description
     st.write('Hello')
     personal_info = extract_personal_info()

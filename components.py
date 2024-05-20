@@ -1,6 +1,7 @@
 import streamlit as st
 import cover_letter_generator as clg
 
+import service as serv
 def title():
     st.title("Generate Cover Letter", anchor=False)
     st.subheader("That Actually Works.")
@@ -31,6 +32,8 @@ def job_type_select(job_type_list):
         "Select Job Type", 
         job_type_list.values(),
         help="This will help us to create designated chats for you.")
+    # if job_type != st.session_state.job_type:
+    serv.show_uploaded_files(st.session_state.database_conn_token.cursor(), job_type.replace(' ', '_'))
     return job_type
 
 def generate_button():
