@@ -28,7 +28,7 @@ def databaseConnection(username, password, account):
             user=username,
             password=password,
             account=account,
-            warehouse="HACKATHON",
-            role="ACCOUNTADMIN"
+            warehouse=st.secrets["warehouse"],
+            role=st.secrets["role"]
         )
         return con

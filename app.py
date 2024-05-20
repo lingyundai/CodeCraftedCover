@@ -27,7 +27,7 @@ with col1:
 # Components that go into the main area
 with col2:
     if st.session_state.db_connection == True:
-        cmpnt.user_signed_in()
+        serv.user_signed_in()
         serv.getfile_Content()
 
 cmpnt.chatbot()
