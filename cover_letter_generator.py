@@ -8,9 +8,6 @@ import json
 
 def chatbot():
     instructions = "Be concise. Do not hallucinate"
-    # st.write(st.session_state.fetched_data)
-    # st.write(st.session_state.job_description)
-    # st.write(st.session_state.additional_info)
     # Initialize message history in session state
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
@@ -55,7 +52,17 @@ def chatbot():
 
 def generate_initial_content():
     # return "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
-    return st.session_state.fetched_data
+    prompt = [
+    f"Given the applicant's resume and the job description, generate a cover letter that includes the following sections: \n\n"
+    f"1. Personal Profile Building Story: Introduce the applicant and highlight their core strengths and unique qualities. \n\n"
+    f"2. Experience Mapping: Link the applicant's experiences and skills to the job description. Use scenarios to demonstrate impact. \n\n"
+    f"3. Address Gaps: If there are gaps between the resume and job description, acknowledge and explain them. \n\n"
+    f"4. Conclusion: Summarize the applicant's suitability for the role and express enthusiasm for the position. \n\n"
+    f"Resume: {st.session_state.fetched_data}\n\n"
+    f"Job Description: {st.session_state.job_description}\n\n"
+    f"Additional Information: {st.session_state.additional_info}\n\n"
+    f"Cover Letter:"]
+    return prompt
 
 def generate_cover_letter(user_data, job_description, additional_info):
     # # Step 1: Extract relevant details from user data and job description
