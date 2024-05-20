@@ -29,5 +29,5 @@ with col2:
     if st.session_state.db_connection == True:
         serv.user_signed_in()
         serv.getfile_Content()
-
-cmpnt.chatbot()
+if st.session_state.isGenerated == True:
+    cmpnt.chatbot()

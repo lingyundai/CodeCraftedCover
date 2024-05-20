@@ -17,5 +17,6 @@
   "user_sign_In": false,
   "Job_desc": null,
   "addition_info": null,
-  "isFirstPrompt": false
+  "isFirstPrompt": false,
+  "isGenerated": false
 }

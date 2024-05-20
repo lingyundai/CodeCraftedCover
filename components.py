@@ -42,14 +42,17 @@ def generate_button():
         submit = st.sidebar.button("Submit")
         if submit:
             if st.session_state.job_description and st.session_state.addition_info and st.session_state.fetched_data:
+                st.session_state.isGenerated = True
                 st.sidebar.caption("Successfully Submitted!")
             else:
+                st.session_state.isGenerated = False
                 st.sidebar.caption("Please check if you have atleast uploaded a files, entered job description and additional information.")
 
 
 def chatbot():
     instructions = "Be concise. Do not hallucinate"
-
+    st.write(st.session_state.job_description)
+    st.write(st.session_state.addition_info)
     # Initialize message history in session state
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
