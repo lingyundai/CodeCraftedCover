@@ -4,6 +4,45 @@ import streamlit as st
 import snowflake.connector as snconn
 import json
 
+def chatbot():
+    instructions = "Be concise. Do not hallucinate"
+    st.write(st.session_state.job_description)
+    st.write(st.session_state.additional_info)
+    # Initialize message history in session state
+    if "messages" not in st.session_state:
+        st.session_state["messages"] = [
+            {
+                'role': 'assistant',
+                'content': "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
+                # 'content': st.session_state.fetched_data if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
+            }
+        ]
+    # User input prompt
+    prompt = st.chat_input("Type your message", key="chat_input")
+
+    if prompt:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.session_state.isFirstPrompt = True
+
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant"):  
+            context = ",".join(f"role:{message['role']} content:{message['content']}" for message in st.session_state.messages)
+            response = cortex.Complete('mistral-large', f"Instructions:{instructions}, context:{context}, Prompt:{prompt}",session = st.session_state.new_session)
+            st.markdown(response)
+
+            st.session_state.messages.append({
+                'role': 'assistant',
+                'content': response
+            })
+
+
+        # Scroll to the last message
+        st.write('<meta name="viewport" content="width=device-width, initial-scale=1">', unsafe_allow_html=True)
+        st.write('<script>var element = document.body; element.scrollTop = element.scrollHeight;</script>', unsafe_allow_html=True)
+
+
 def generate_cover_letter(user_data, job_description, additional_info):
     # # Step 1: Extract relevant details from user data and job description
     st.write('Hello')
