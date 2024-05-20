@@ -4,15 +4,12 @@ import streamlit as st
 import snowflake.connector as snconn
 import json
 
-def generate_cover_letter(user_data, job_description):
-    #st.write(user_data,job_description)
+def generate_cover_letter(user_data, job_description, additional_info):
     # # Step 1: Extract relevant details from user data and job description
-    dbConnUserInfo = dbConn.databaseConnection(st.session_state.username, st.session_state.password , st.session_state.account)
-    personal_info = extract_personal_info(user_data,job_description,dbConnUserInfo)
-    st.write(personal_info)
-    # username = personal_info['username']
-    # st.write(username)
-    # skills, experience = extract_skills_experience(user_data)
+    st.write('Hello')
+    print(st.session_state.database_conn_token)
+    # personal_info = extract_personal_info(user_data,job_description,dbConnUserInfo)
+    # st.write(personal_info)
     
     # # Step 2: Use the Snowflake Arctic model to generate each section
     # personal_profile = generate_personal_profile(personal_info)
