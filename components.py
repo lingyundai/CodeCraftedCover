@@ -96,6 +96,5 @@ def connection_establish():
 def credential_not_valid():
     st.caption("Please enter valid credentials")
 
-def user_signed_in():
-    st.write(f"Signed in as: {st.session_state.username}")
-    st.button("Sign Out")
+def render_ui():
+    st.rerun()

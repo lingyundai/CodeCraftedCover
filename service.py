@@ -25,7 +25,9 @@ def load_session_state_from_json(file_path="state.json"):
 def Database_connect(username, password, account):
     if (username and password and account):
         # Connect to the database and store the connection object in the session state
-        st.session_state.database_conn_token = dbConn.databaseConnection(username, password, account)
+        st.session_state.database_conn_token = dbConn.databaseConnection(username, 
+                                                                         password, 
+                                                                         account)
         # Create a cursor object
         cur = st.session_state.database_conn_token.cursor()
         # Create a new database
@@ -82,12 +84,14 @@ def show_uploaded_files(cur, table_name):
     filenames = [row[0] for row in st.session_state.data]
     # print(filenames)
     if len(filenames) > 0:
-        st.sidebar.write("Click on the file name to delete it.")
+        st.sidebar.write("Uploaded File History: ")
         for i, filename in enumerate(filenames):
-            if st.sidebar.button(filename):
+            col1, col2 = st.sidebar.columns([0.8, 0.1])
+            col1.write(filename)
+            remove_button = col2.button("✖️", key=f"remove_{i}")
+            if remove_button:
                 dbOps.delete_file(cur, table_name, filename)
-                # re-render
-                st.rerun()
+                cmpnt.render_ui()
 
 def getfile_Content():
     # st.write(st.session_state.data)
@@ -114,4 +118,14 @@ def user_sign_in():
             # Key value set db_connection to true in session state 
             Database_connect(username, password, account)
             st.session_state.db_connection = True
-            st.rerun()
+            cmpnt.render_ui()
+
+def user_signed_in():
+    st.write(f"Signed in as: {st.session_state.username}")
+    if st.button("Sign Out"):
+        st.session_state.username = None
+        st.session_state.password = None
+        st.session_state.account = None
+        st.session_state.db_connection = False
+        cmpnt.connection_parameters_input()
+        cmpnt.render_ui()
