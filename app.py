@@ -28,6 +28,5 @@ with col1:
 with col2:
     if st.session_state.db_connection == True:
         serv.user_signed_in()
-        serv.getfile_Content()
 if st.session_state.isGenerated == True:
     clg.chatbot()

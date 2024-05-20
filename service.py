@@ -18,7 +18,7 @@ def load_session_state_from_json(file_path="state.json"):
             if key not in st.session_state:
                 st.session_state[key] = value
     except FileNotFoundError:
-        cmpnt.file_not_found_eror()
+        cmpnt.file_not_found_error()
     except json.JSONDecodeError:
         cmpnt.json_decode_error()
 
@@ -74,12 +74,15 @@ def file_upload(job_type):
         dbOps.create_table(cur, table_name)
         for data in text:
             dbOps.insert_data(cur, table_name, data)
-        show_uploaded_files(cur, table_name)
-
+        # cmpnt.render_ui()
 
 def show_uploaded_files(cur, table_name):
     # Fetch all data from the table
+    st.session_state.fetched_data = []
+    st.session_state.data = []
     st.session_state.data = dbOps.fetch_data(cur, table_name)
+    for row in st.session_state.data:
+            st.session_state.fetched_data.append(row[1])
     # Display the filenames
     filenames = [row[0] for row in st.session_state.data]
     # print(filenames)
@@ -92,15 +95,6 @@ def show_uploaded_files(cur, table_name):
             if remove_button:
                 dbOps.delete_file(cur, table_name, filename)
                 cmpnt.render_ui()
-
-def getfile_Content():
-    # st.write(st.session_state.data)
-    if len(st.session_state.data) > 0:
-        for row in st.session_state.data:
-            st.session_state.fetched_data.append(row[1])
-    else:
-        st.session_state.fetched_data = []
-
 
 @st.experimental_dialog("User Sign In")
 def user_sign_in():
