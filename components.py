@@ -41,17 +41,18 @@ def generate_button():
                     placeholder="For example, 'please do not copy and paste things from job description to the cover letter!' or 'I am also experienced in xxx'.",value=st.session_state.additional_info)
         submit = st.sidebar.button("Submit")
         if submit:
-            if st.session_state.job_description and st.session_state.additional_info and st.session_state.fetched_data:
-                chatbot()
-                # clg.generate_cover_letter(st.session_state.fetched_data, st.session_state.job_description, st.session_state.additional_info)
+            if st.session_state.job_description and st.session_state.addition_info and st.session_state.fetched_data:
+                st.session_state.isGenerated = True
                 st.sidebar.caption("Successfully Submitted!")
             else:
+                st.session_state.isGenerated = False
                 st.sidebar.caption("Please check if you have atleast uploaded a files, entered job description and additional information.")
 
 
 def chatbot():
     instructions = "Be concise. Do not hallucinate"
-
+    st.write(st.session_state.job_description)
+    st.write(st.session_state.addition_info)
     # Initialize message history in session state
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
