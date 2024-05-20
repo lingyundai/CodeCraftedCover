@@ -51,8 +51,9 @@ def extract_personal_info(user_data, job_description, dbConnUserInfo):
     # Use Snowflake to generate relevant personal information
     cur = dbConnUserInfo.cursor()
     try:
-        # cur.execute("SELECT SNOWFLAKE.CORTEX.COMPLETE(%s, %s, %s)", ('snowflake-arctic', prompt, options))
-        cur.execute("SELECT SNOWFLAKE.CORTEX.COMPLETE('snowflake-arctic', PARSE_JSON(%s), PARSE_JSON(%s))", params)
+        query="SELECT SNOWFLAKE.CORTEX.COMPLETE(%s, %s, %s)"
+        cur.execute(query, ('snowflake-arctic', params['prompt'], params['options']))
+        
         result = cur.fetchall()
         print(result)
         relevant_info = result[0][0] if result else ""
