@@ -8,7 +8,7 @@ import json
 
 def chatbot():
     instructions = "Be concise. Do not hallucinate"
-    st.write(st.session_state.fetched_data)
+    # st.write(st.session_state.fetched_data)
     # st.write(st.session_state.job_description)
     # st.write(st.session_state.additional_info)
     # Initialize message history in session state
@@ -20,8 +20,15 @@ def chatbot():
                 'content': generate_initial_content() if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
             }
         ]
+    
+    if st.session_state.isGenerated:
+        Generate_CV = "Generate cover letter Based on the uploaded files and provided ", f"Job_description:{st.session_state.job_description} and additional_information:{st.session_state.additional_info}."
+        context = ",".join(f"role:{message['role']} content:{message['content']}" for message in st.session_state.messages)
+        response = cortex.Complete('mistral-large', f"Instructions:{instructions}, context:{context}, Prompt:{Generate_CV}",session = st.session_state.new_session)
+        st.markdown(response)
+
     # User input prompt
-    prompt = st.chat_input("Type your message", key="chat_input")
+    prompt = st.chat_input("If you have any questions or need assistance, please type here.")
 
     if prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})
