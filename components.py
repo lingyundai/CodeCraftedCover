@@ -1,4 +1,5 @@
 import streamlit as st
+import snowflake.cortex as cortex 
 import dbConnection as dbConn
 import dbOperation as dbOps 
 import pandas as pd
@@ -90,13 +91,14 @@ def submit_button():
     st.button("Generate")
 
 def connection_parameters_input():
-    account = st.sidebar.text_input('Enter Snowflake Account', 
+    account = st.text_input('Enter Snowflake Account', 
                                     placeholder="Your Snowflake account",
                                     help="One of the Snowflake commercial regions, besides us-east as our LLM is not currently avaliable in those regions." ,value = st.secrets["account"])
-    username = st.sidebar.text_input('Enter Snowflake Username', placeholder="Your Snowflake username" ,value = st.secrets["username"])
-    password = st.sidebar.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password', value = st.secrets["password"])
-    submit = st.sidebar.button("Connect")
+    username = st.text_input('Enter Snowflake Username', placeholder="Your Snowflake username" ,value = st.secrets["username"])
+    password = st.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password', value = st.secrets["password"])
+    submit = st.button("Connect")
     return account, username, password, submit
+
 
 def job_type_select(job_type_list):
     job_type = st.sidebar.selectbox(
@@ -105,43 +107,70 @@ def job_type_select(job_type_list):
         help="This will help us to create designated chats for you.")
     return job_type
 
-def file_history(session_state, job_type):
-    # Get the file history for the selected job type
-    job_file_history = session_state.get(job_type, [])
-    st.sidebar.write(f"File History For {job_type} Position:")
-    # Display text based on if file history is empty
-    if len(job_file_history) == 0:
-        st.sidebar.write("No File Found")
-    else:
-        for file in job_file_history:
-            # Styling the file and remove button
-            col1, col2 = st.sidebar.columns([0.7, 0.2])
-            col1.write(file)
-            # if file removed remove from session state
-            if col2.button("Remove", key=f"remove_{file}"):
-                session_state[job_type].remove(file)
-                # re-render
-                st.rerun() 
-
-def db_connect_error(error):
-    st.sidebar.caption(f"{error}")
-
-def db_connect_success(username, password, account):
-    st.sidebar.caption("Successfully Connected!")
-    if (username and password and account):
-        # Connect to the database
-        con = dbConn.databaseConnection(username, password, account)
-
-        # Create a cursor object
-        cur = con.cursor()
-
-        # Perform operations on the database
-        dbOps.create_database(cur, 'userDB')
-        dbOps.switch_database(cur, 'userDB')
-        # Close the connection
-        con.close()
-
 def generate_button():
+   with st.form("my_form"):
+        st.session_state.job_description = st.sidebar.text_area("Enter Job Description", placeholder="Copy-and-paste the job description, the more information the better!")
+        st.session_state.addition_info = st.sidebar.text_area("Anything Else That Would Help?", 
+                    placeholder="For example, 'please do not copy and paste things from job description to the cover letter!' or 'I am also experienced in xxx'.")
+        submit = st.sidebar.button("Submit")
+        if submit:
+            if st.session_state.job_description and st.session_state.addition_info and st.session_state.fetched_data:
+                st.sidebar.caption("Successfully Submitted!")
+            else:
+                st.sidebar.caption("Please check if you have atleast uploaded a files, entered job description and additional information.")
+
+
+def chatbot():
+    instructions = "Be concise. Do not hallucinate"
+
+    # Initialize message history in session state
+    if "messages" not in st.session_state:
+        st.session_state["messages"] = [
+            {
+                'role': 'assistant',
+                'content': "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
+                # 'content': st.session_state.fetched_data if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
+            }
+        ]
+    # User input prompt
+    prompt = st.chat_input("Type your message", key="chat_input")
+
+    if prompt:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.session_state.isFirstPrompt = True
+
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant"):  
+            context = ",".join(f"role:{message['role']} content:{message['content']}" for message in st.session_state.messages)
+            response = cortex.Complete('mistral-large', f"Instructions:{instructions}, context:{context}, Prompt:{prompt}",session = st.session_state.new_session)
+            st.markdown(response)
+
+            st.session_state.messages.append({
+                'role': 'assistant',
+                'content': response
+            })
+
+
+        # Scroll to the last message
+        st.write('<meta name="viewport" content="width=device-width, initial-scale=1">', unsafe_allow_html=True)
+        st.write('<script>var element = document.body; element.scrollTop = element.scrollHeight;</script>', unsafe_allow_html=True)
+
+def file_not_found_error():
+    st.warning("Session state file not found. Starting with an empty session state.")
+
+def json_decode_error():
+    st.error("Error decoding session state file. Starting with an empty session state.")
+
+def connection_establish():
+    st.caption("Successfully Connected!")
+
+def credential_not_valid():
+    st.caption("Please enter valid credentials")
+
+def render_ui():
+    st.rerun()
     # Use columns to keep button to the right of the side bar
     col1, col2 = st.sidebar.columns([0.7, 0.4])
     col2.button("Ready to Generate ➡️")

@@ -1,0 +1,21 @@
+{
+  "db_connection": false,
+  "Job_type_list": {
+    "SWE": "Software Engineer",
+    "MLE": "Machine Learning Engineer",
+    "DS": "Data Scientist",
+    "DA": "Data Analyst"
+  },
+  "job_type": null,
+  "data": [],
+  "fetched_data": [],
+  "new_session": null,
+  "username": null,
+  "password": null,
+  "account": null,
+  "database_conn_token": null,
+  "user_sign_In": false,
+  "Job_desc": null,
+  "addition_info": null,
+  "isFirstPrompt": false
+}
