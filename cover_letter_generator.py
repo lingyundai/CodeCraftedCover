@@ -2,19 +2,22 @@ import dbConnection as dbConn
 from snowflake.snowpark import Session
 import streamlit as st
 import snowflake.connector as snconn
+import snowflake.cortex as cortex 
+
 import json
 
 def chatbot():
     instructions = "Be concise. Do not hallucinate"
-    st.write(st.session_state.job_description)
-    st.write(st.session_state.additional_info)
+    st.write(st.session_state.fetched_data)
+    # st.write(st.session_state.job_description)
+    # st.write(st.session_state.additional_info)
     # Initialize message history in session state
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
             {
                 'role': 'assistant',
-                'content': "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
-                # 'content': st.session_state.fetched_data if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
+                # 'content': "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
+                'content': generate_initial_content() if len(st.session_state.fetched_data) > 0 else "No files uploaded yet. Please upload files to generate cover letter."
             }
         ]
     # User input prompt
@@ -42,6 +45,10 @@ def chatbot():
         st.write('<meta name="viewport" content="width=device-width, initial-scale=1">', unsafe_allow_html=True)
         st.write('<script>var element = document.body; element.scrollTop = element.scrollHeight;</script>', unsafe_allow_html=True)
 
+
+def generate_initial_content():
+    # return "Hello! I'm here to help you generate a cover letter. Please upload files and provide job description to get started."
+    return st.session_state.fetched_data
 
 def generate_cover_letter(user_data, job_description, additional_info):
     # # Step 1: Extract relevant details from user data and job description
