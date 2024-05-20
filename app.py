@@ -2,7 +2,7 @@ import streamlit as st
 import components as cmpnt
 import dbConnection as conn
 import service as serv
-
+import cover_letter_generator as clg
 # Load session state from JSON file
 serv.load_session_state_from_json()
 
@@ -29,5 +29,5 @@ with col2:
     if st.session_state.db_connection == True:
         serv.user_signed_in()
         serv.getfile_Content()
-
-cmpnt.chatbot()
+if st.session_state.isGenerated == True:
+    clg.chatbot()
