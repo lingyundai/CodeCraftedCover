@@ -51,9 +51,79 @@ def generate_cover_letter():
     return
 
 def extract_personal_info():
-    resume=""
+    resume = """
+Name: John Doe
+Email: johndoe@example.com
+Phone: +1 (555) 123-4567
+LinkedIn: linkedin.com/in/johndoe
+GitHub: github.com/johndoe
+
+Address:
+1234 Elm Street
+Tech City, CA 90210
+United States
+
+Objective:
+Passionate and dedicated Software Developer with over 5 years of experience in full-stack development, seeking to leverage my expertise in software engineering to contribute to the success of a dynamic team.
+
+Education:
+Master of Science in Computer Science
+Fictional University, Tech City, CA
+August 2017 - May 2019
+- GPA: 3.85/4.00
+- Relevant coursework: Advanced Algorithms, Machine Learning, Distributed Systems
+
+Bachelor of Science in Computer Science
+Imaginary Institute of Technology, Tech City, CA
+August 2013 - May 2017
+- GPA: 3.75/4.00
+- Relevant coursework: Data Structures, Database Systems, Operating Systems
+
+Skills:
+- Languages: Python, JavaScript, Java, C++
+- Frameworks: React.js, Node.js, Angular, Spring Boot
+- Databases: MySQL, PostgreSQL, MongoDB
+- Tools: Git, Docker, Jenkins, Kubernetes
+- Technologies: AWS, RESTful APIs, Microservices, Agile/Scrum
+
+Professional Experience:
+Software Developer
+Tech Innovators Inc., Tech City, CA
+July 2019 - Present
+- Designed and developed scalable web applications using React.js and Node.js, improving user engagement by 25%.
+- Implemented RESTful APIs and microservices architecture, enhancing system performance and maintainability.
+- Collaborated with cross-functional teams to deliver new features and resolve critical bugs, ensuring timely releases.
+- Mentored junior developers, providing guidance and support to enhance their coding skills and productivity.
+- Utilized Docker and Kubernetes for containerization and orchestration, improving deployment efficiency.
+
+Junior Software Developer
+Creative Solutions, Tech City, CA
+June 2017 - June 2019
+- Assisted in the development of web applications using Java and Spring Boot, contributing to an increase in user satisfaction by 20%.
+- Developed and maintained SQL and NoSQL databases, optimizing query performance and data retrieval times.
+- Participated in Agile development processes, including sprint planning, stand-ups, and retrospectives.
+- Conducted code reviews and collaborated with senior developers to ensure high-quality code standards.
+- Created detailed technical documentation and user manuals for newly developed features and applications.
+
+Projects:
+E-commerce Platform Development
+- Developed a full-stack e-commerce platform using React.js and Node.js, facilitating seamless online shopping experiences.
+- Implemented payment gateway integration and user authentication, ensuring secure transactions and user data protection.
+- Utilized MongoDB for database management, achieving efficient data storage and retrieval.
+
+Machine Learning Model for Predictive Analysis
+- Designed and trained machine learning models using Python and Scikit-learn to predict customer churn with 85% accuracy.
+- Analyzed large datasets and performed feature engineering to enhance model performance and reliability.
+
+Certifications:
+- Certified Kubernetes Administrator (CKA)
+- AWS Certified Solutions Architect – Associate
+- Professional Scrum Master (PSM I)
+
+References: Available upon request.
+"""
     # Create a prompt to extract relevant personal information according to the job description
-    relevant_info=cortex.Complete('snowflake-arctic', f"Extract relevant personal information according to the job description from multiple resumes. The resumes:{st.session_state.fetched_data}, and job description:{st.session_state.job_description}",session = st.session_state.new_session)
+    relevant_info=cortex.Complete('snowflake-arctic', f"Extract relevant personal information according to the job description. The resumes:{st.session_state.fetched_data}, and job description:{st.session_state.job_description}",session = st.session_state.new_session)
     st.write(relevant_info)
 
 # def extract_skills_experience(user_data):
