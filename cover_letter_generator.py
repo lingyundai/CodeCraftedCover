@@ -3,11 +3,12 @@ from snowflake.snowpark import Session
 import streamlit as st
 import snowflake.connector as snconn
 import json
+import snowflake.cortex as cortex 
 
 def chatbot():
     instructions = "Be concise. Do not hallucinate"
-    st.write(st.session_state.job_description)
-    st.write(st.session_state.additional_info)
+    # st.write(st.session_state.job_description)
+    # st.write(st.session_state.additional_info)
     # Initialize message history in session state
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
@@ -43,61 +44,17 @@ def chatbot():
         st.write('<script>var element = document.body; element.scrollTop = element.scrollHeight;</script>', unsafe_allow_html=True)
 
 
-def generate_cover_letter(user_data, job_description, additional_info):
+def generate_cover_letter():
     # # Step 1: Extract relevant details from user data and job description
     st.write('Hello')
-    print(st.session_state.database_conn_token)
-    # personal_info = extract_personal_info(user_data,job_description,dbConnUserInfo)
-    # st.write(personal_info)
-    
-    # # Step 2: Use the Snowflake Arctic model to generate each section
-    # personal_profile = generate_personal_profile(personal_info)
-    # experience_mapping = generate_experience_mapping(skills, experience, job_description)
-    # gap_addressing = address_gaps(skills, job_description)
-    # conclusion = generate_conclusion(personal_info)
-
-    # Step 3: Combine all sections into a single cover letter
-    # cover_letter = f"{personal_profile}\n\n{experience_mapping}\n\n{gap_addressing}\n\n{conclusion}"
-    # return cover_letter
+    personal_info = extract_personal_info()
     return
 
-def extract_personal_info(user_data, job_description, dbConnUserInfo):
+def extract_personal_info():
+    resume=""
     # Create a prompt to extract relevant personal information according to the job description
-    prompt = [
-        {
-            'role': 'system',
-            'content': 'You are a helpful AI assistant. Extract the relevant personal information from the user data according to the job description.'
-        },
-        {
-            'role': 'user',
-            'content': user_data
-        }
-    ]
-
-    options = {
-        'temperature': 0.7,
-        'max_tokens': 10
-    }
-    # Define the parameters
-    params = {
-        'prompt': json.dumps(prompt),
-        'options': json.dumps(options)
-    }
-
-    # Use Snowflake to generate relevant personal information
-    cur = dbConnUserInfo.cursor()
-    try:
-        query="SELECT SNOWFLAKE.CORTEX.COMPLETE(%s, %s, %s)"
-        cur.execute(query, ('snowflake-arctic', params['prompt'], params['options']))
-        
-        result = cur.fetchall()
-        print(result)
-        relevant_info = result[0][0] if result else ""
-    finally:
-        cur.close()
-
-    return relevant_info
-
+    relevant_info=cortex.Complete('snowflake-arctic', f"Extract relevant personal information according to the job description from multiple resumes. The resumes:{st.session_state.fetched_data}, and job description:{st.session_state.job_description}",session = st.session_state.new_session)
+    st.write(relevant_info)
 
 # def extract_skills_experience(user_data):
 #     # Extract skills and experience logic here

@@ -1,5 +1,4 @@
 import streamlit as st
-import snowflake.cortex as cortex 
 import cover_letter_generator as clg
 
 def title():

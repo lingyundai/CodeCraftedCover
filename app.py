@@ -31,3 +31,4 @@ with col2:
         serv.getfile_Content()
 if st.session_state.isGenerated == True:
     clg.chatbot()
+    clg.generate_cover_letter()
