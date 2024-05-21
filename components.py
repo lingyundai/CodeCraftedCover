@@ -18,10 +18,9 @@ def app_introduction():
 def connection_parameters_input():
     account = st.text_input('Enter Snowflake Account', 
                                     placeholder="Your Snowflake account",
-                                    help="Please use region that supports 'mistral-large' model. [Need Help?](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions?utm_cta=website-homepage-workload-button-explore-platform)", 
-                                    value = st.secrets["account"])
-    username = st.text_input('Enter Snowflake Username', placeholder="Your Snowflake username" ,value = st.secrets["username"])
-    password = st.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password', value = st.secrets["password"])
+                                    help="Please use region that supports 'mistral-large' model. [Need Help?](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions?utm_cta=website-homepage-workload-button-explore-platform)")
+    username = st.text_input('Enter Snowflake Username', placeholder="Your Snowflake username")
+    password = st.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password')
     submit = st.button("Connect")
     return account, username, password, submit
 

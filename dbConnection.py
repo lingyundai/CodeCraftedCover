@@ -26,7 +26,22 @@ def databaseConnection(username, password, account):
             user=username,
             password=password,
             account=account,
-            warehouse=st.secrets["warehouse"],
-            role=st.secrets["role"]
+        )
+        # Create a cursor object
+        cur = con.cursor()
+
+        # Execute the SQL command to create a warehouse
+        cur.execute(f"CREATE WAREHOUSE IF NOT EXISTS COMPUTE_WH")
+
+        # Close the cursor
+        cur.close()
+
+        # Re-establish the connection with the new warehouse
+        con = snconn.connect(
+            user=username,
+            password=password,
+            account=account,
+            warehouse='COMPUTE_WH',
+            role='ACCOUNTADMIN'
         )
         return con
