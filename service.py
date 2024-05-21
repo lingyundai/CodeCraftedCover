@@ -35,7 +35,6 @@ def Database_connect(username, password, account):
         # Switch to the new database
         dbOps.switch_database(cur, 'userDB')
         # Close the connection
-        # st.session_state.database_conn_token.close()
         cmpnt.connection_establish()
         st.session_state.db_connection = True
 
@@ -74,7 +73,6 @@ def file_upload(job_type):
         dbOps.create_table(cur, table_name)
         for data in text:
             dbOps.insert_data(cur, table_name, data)
-        # cmpnt.render_ui()
 
 def show_uploaded_files(cur, table_name):
     # Fetch all data from the table
@@ -85,7 +83,7 @@ def show_uploaded_files(cur, table_name):
             st.session_state.fetched_data.append(row[1])
     # Display the filenames
     filenames = [row[0] for row in st.session_state.data]
-    # print(filenames)
+
     if len(filenames) > 0:
         st.sidebar.write("Uploaded File History: ")
         for i, filename in enumerate(filenames):
@@ -96,7 +94,7 @@ def show_uploaded_files(cur, table_name):
                 dbOps.delete_file(cur, table_name, filename)
                 cmpnt.render_ui()
 
-@st.experimental_dialog("User Sign In")
+@st.experimental_dialog("Sign In")
 def user_sign_in():
     account, username, password, submit = cmpnt.connection_parameters_input()
     if "username" "password" "account" not in st.session_state:
@@ -117,9 +115,12 @@ def user_sign_in():
 def user_signed_in():
     st.write(f"Signed in as: {st.session_state.username}")
     if st.button("Sign Out"):
+        st.session_state.isGenerated = False
+        st.session_state.new_session.close()
+        st.session_state.database_conn_token.close()
         st.session_state.username = None
         st.session_state.password = None
         st.session_state.account = None
         st.session_state.db_connection = False
-        cmpnt.connection_parameters_input()
+        st.session_state.new_session = None
         cmpnt.render_ui()
