@@ -3,14 +3,19 @@ import components as cmpnt
 import dbConnection as conn
 import service as serv
 import cover_letter_generator as clg
+
 # Load session state from JSON file
 serv.load_session_state_from_json()
+
+# Theme
+cmpnt.theme()
+cmpnt.theme_toggle()
 
 # Main Container sign in and sign out status
 if st.session_state.db_connection == False:
     cmpnt.title()
     cmpnt.app_introduction()
-    st.write("Please use your snowflake account to sign in.")
+    st.caption("Please use your snowflake account to sign in.")
     if st.button("Sign In"):
         serv.user_sign_in()
 
