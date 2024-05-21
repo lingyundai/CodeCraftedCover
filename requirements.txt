@@ -2,4 +2,3 @@ streamlit
 snowflake-connector-python
 PyPDF2
 python-docx
-json
