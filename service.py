@@ -44,13 +44,13 @@ def Database_connect(username, password, account):
 
 def file_upload(job_type):
     text = []
-    uploaded_file = st.sidebar.file_uploader("Upload Files", 
+    st.session_state.uploaded_file = st.sidebar.file_uploader("Upload Files", 
                              type=["pdf", "docx"], 
                              help="Any file that you think would help us to generate a accurate cover letter for you",
-                             accept_multiple_files=True)
-    if uploaded_file is not None:
+                             accept_multiple_files=True,key=str(st.session_state.upload_key))
+    if st.session_state.uploaded_file is not None:
         text = []  # Initialize text as an empty list
-        for file in uploaded_file:
+        for file in st.session_state.uploaded_file:
             # To read file as bytes:
             bytes_data = file.read()
             file_content = ''  # Initialize file_content as an empty string
@@ -70,7 +70,6 @@ def file_upload(job_type):
             text.append([{'file_name': file.name, 'file_content': file_content.strip()}])
         cur = st.session_state.database_conn_token.cursor()
         table_name = job_type.replace(' ', '_')
-        dbOps.create_table(cur, table_name)
         for data in text:
             dbOps.insert_data(cur, table_name, data)
 

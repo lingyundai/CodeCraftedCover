@@ -1,5 +1,6 @@
 import streamlit as st
 import service as serv
+import dbOperation as dbOps
 def title():
     st.title("Generate Cover Letter", anchor=False)
     st.subheader("That Actually Works.")
@@ -30,7 +31,10 @@ def job_type_select(job_type_list):
         "Select Job Type", 
         job_type_list.values(),
         help="This will help us to create designated chats for you.")
-
+    dbOps.create_table(st.session_state.database_conn_token.cursor(), job_type.replace(' ', '_'))
+    if st.session_state.job_type != job_type:
+        st.session_state.uploaded_file = None
+        st.session_state.upload_key += 1
     serv.show_uploaded_files(st.session_state.database_conn_token.cursor(), job_type.replace(' ', '_'))
     return job_type
 
