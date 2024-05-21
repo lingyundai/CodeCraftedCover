@@ -4,4 +4,4 @@ PyPDF2
 python-docx
 snowflake-snowpark-python
 pyarrow
-pandas
+snowflake-ml-python
