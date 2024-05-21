@@ -115,9 +115,12 @@ def user_sign_in():
 def user_signed_in():
     st.write(f"Signed in as: {st.session_state.username}")
     if st.button("Sign Out"):
+        st.session_state.isGenerated = False
+        st.session_state.new_session.close()
+        st.session_state.database_conn_token.close()
         st.session_state.username = None
         st.session_state.password = None
         st.session_state.account = None
         st.session_state.db_connection = False
-        cmpnt.connection_parameters_input()
+        st.session_state.new_session = None
         cmpnt.render_ui()
