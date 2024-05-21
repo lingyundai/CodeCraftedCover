@@ -32,6 +32,7 @@ def databaseConnection(username, password, account):
 
         # Execute the SQL command to create a warehouse
         cur.execute(f"CREATE WAREHOUSE IF NOT EXISTS COMPUTE_WH")
+        cur.execute(f"ALTER USER {username} SET DEFAULT_WAREHOUSE = COMPUTE_WH")
 
         # Close the cursor
         cur.close()
