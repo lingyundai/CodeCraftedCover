@@ -18,7 +18,7 @@ def chatbot():
     if st.session_state.isGenerated:
         initial_prompt = generate_initial_prompt()
         context = ",".join(f"role:{message['role']} content:{message['content']}" for message in st.session_state.messages)
-        response = cortex.Complete('snowflake-arctic', f"Instructions:{instructions}, context:{context}, Prompt:{initial_prompt}", 
+        response = cortex.Complete('mistral-large', f"Instructions:{instructions}, context:{context}, Prompt:{initial_prompt}", 
                                    session = st.session_state.new_session)
         st.markdown(response)
 
@@ -34,7 +34,7 @@ def chatbot():
 
         with st.chat_message("assistant"):  
             context = ",".join(f"role:{message['role']} content:{message['content']}" for message in st.session_state.messages)
-            response = cortex.Complete('snowflake-arctic', f"Instructions:{instructions}, context:{context}, Prompt:{prompt}", 
+            response = cortex.Complete('mistral-large', f"Instructions:{instructions}, context:{context}, Prompt:{prompt}", 
                                        session = st.session_state.new_session)
             st.markdown(response)
 
@@ -96,7 +96,7 @@ def extract_personal_info(user_data, dbConnUserInfo):
     cur = dbConnUserInfo.cursor()
     try:
         query="SELECT SNOWFLAKE.CORTEX.COMPLETE(%s, %s, %s)"
-        cur.execute(query, ('snowflake-arctic', params['prompt'], params['options']))
+        cur.execute(query, ('mistral-large', params['prompt'], params['options']))
         
         result = cur.fetchall()
         print(result)

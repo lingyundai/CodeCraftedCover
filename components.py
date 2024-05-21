@@ -12,13 +12,13 @@ def app_introduction():
     st.write("This application will fix that!! Hopefully, in these ways -")
     st.write("1. We use comprehensive information to generate a detailed, useful cover letter for the job type you are applying to.")
     st.write("2. We keep history of the files you uploaded, overtime, the cover letter just gets more and more personalized for you and your desired job type.")
-    st.write("3. Chat GPT? NO! We use the newest LLM technology 'Snowflake Arctic' that generates high-quality models.")
+    st.write("3. Chat GPT? NO! We use the Snowflake LLM technology 'mistral-large' that generates high-quality models.")
     st.write("In the end, we are in this together. Happy generating!")
 
 def connection_parameters_input():
     account = st.text_input('Enter Snowflake Account', 
                                     placeholder="Your Snowflake account",
-                                    help="One of the Snowflake commercial regions, besides us-east as our LLM is not currently avaliable in those regions.", 
+                                    help="Please use region that supports 'mistral-large' model. [Need Help?](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions?utm_cta=website-homepage-workload-button-explore-platform)", 
                                     value = st.secrets["account"])
     username = st.text_input('Enter Snowflake Username', placeholder="Your Snowflake username" ,value = st.secrets["username"])
     password = st.text_input('Enter Snowflake Password', placeholder="Your Snowflake password", type='password', value = st.secrets["password"])
