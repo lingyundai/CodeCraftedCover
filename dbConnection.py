@@ -4,8 +4,6 @@ import streamlit as st
 
 
 def connection(account, username, password):
-    # intialize new session and error
-    # new_session = None
     error = None
     connection_parameters = {
         "account": account,
