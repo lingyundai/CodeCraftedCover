@@ -3,3 +3,5 @@ snowflake-connector-python
 PyPDF2
 python-docx
 snowflake-snowpark-python
+pyarrow
+snowflake-ml-python
