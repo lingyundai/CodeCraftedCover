@@ -5,7 +5,7 @@ import json
 import snowflake.cortex as cortex 
 
 def chatbot():
-    instructions = "Be concise. Do not hallucinate"
+    instructions = "You are free to create your own examples and scenarios. They should be related to your resume, but feel free to be creative with your examples."
     # Initialize message history in session state
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
