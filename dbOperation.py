@@ -1,4 +1,5 @@
 import streamlit as st
+
 def create_database(cur, db_name):
     # Create a new database
     cur.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")

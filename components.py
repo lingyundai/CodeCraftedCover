@@ -2,7 +2,7 @@ import streamlit as st
 import service as serv
 import dbOperation as dbOps
 def title():
-    st.title("Generate Cover Letter", anchor=False)
+    st.title("Generate Better Cover Letter", anchor=False)
     st.subheader("That Actually Works.")
 
 def app_introduction():
