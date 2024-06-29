@@ -3,9 +3,10 @@
 <div align="center">
 
 <h3 align="center">Code Crafted Cover</h3>
-![icon](https://github.com/lingyundai/CodeCraftedCover/blob/main/Images/CodeCraftedCoverLogo.png)
 <p align="center">
 Next-Gen Cover Letter Generator with LLM & Snowflake.
+
+![icon](https://github.com/lingyundai/CodeCraftedCover/blob/main/Images/CodeCraftedCoverLogo.png)
 
 <br/>
 <br/>
