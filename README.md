@@ -28,7 +28,10 @@ This application will fix that!! Hopefully, in these ways
 - We keep a history of the files you uploaded, over time, the cover letter just gets more and more personalized for you and your desired job type.
 - Chat GPT? NO! We use the Snowflake LLM technology 'mistral-large' that generates high-quality models.
 
-In the end, we are in this together. Happy generating!
+In the end, we are in this together. 
+
+Happy generating!
+
  ### Built With
 
 - [Snowflake Connector for Python](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector)
