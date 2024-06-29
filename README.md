@@ -63,7 +63,7 @@ Happy generating!
 5. The application will ask you to enter your snowflake credentials. 
  - For the field "Snowflake Account", copy the link that you get after signing in to Snowflake (step 1). In that, enter the code in place of "account".
 ```sh
-For example- https://[account].snowflakecomputing.com/
+For example - https://[account].snowflakecomputing.com/
    ```
 6. In the user name and password prompted by the application, enter your Snowflake credentials.
  ## Contributing
