@@ -2,7 +2,8 @@
 <br/>
 <div align="center">
 
-<h3 align="center">Better Cover Letter Generator</h3>
+<h3 align="center">Code Crafted Cover</h3>
+![icon](https://github.com/lingyundai/leetcode-calendar/blob/master/assets/CodeCraftedCoverLogo.png)
 <p align="center">
 Next-Gen Cover Letter Generator with LLM & Snowflake.
 
