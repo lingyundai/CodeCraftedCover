@@ -8,8 +8,8 @@ Next-Gen Cover Letter Generator with LLM & Snowflake.
 
 <br/>
 <br/>
-<a href="https://better-coverletter-generator.streamlit.app/">View Demo .</a>  
-<a href="https://github.com/lingyundai/snowflake-hackathon/issues/new">Report Bug .</a>
+<a href="https://better-coverletter-generator.streamlit.app/">View Demo</a>  
+<a href="https://github.com/lingyundai/snowflake-hackathon/issues/new">Report Bug</a>
 <a href="https://github.com/lingyundai/snowflake-hackathon/issues/new">Request Feature</a>
 </p>
 </div>
