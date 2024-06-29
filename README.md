@@ -16,7 +16,7 @@ Next-Gen Cover Letter Generator with LLM & Snowflake.
 
  ## About The Project
 
-![Final Screen](https://raw.githubusercontent.com/lingyundai/snowflake-hackathon/main/Images/Final.png)
+![Final Screen](https://raw.githubusercontent.com/lingyundai/snowflake-hackathon/main/Images/Landing_page.png)
 
 Many cover letter generators take minimal information and generate a terrible cover letter that anyone can detect is generated with AI
 - Robotic words and inaccurate information provide no substantial information that the hiring manager wants to see 
