@@ -14,7 +14,7 @@ Next-Gen Cover Letter Generator with LLM & Snowflake.
 </p>
 </div>
 
- ## About The Project
+ ## About The Application
 
 ![Final Screen](https://raw.githubusercontent.com/lingyundai/snowflake-hackathon/main/Images/Landing_page.png)
 
