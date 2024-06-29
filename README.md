@@ -3,7 +3,7 @@
 <div align="center">
 
 <h3 align="center">Code Crafted Cover</h3>
-![icon](https://github.com/lingyundai/leetcode-calendar/blob/main/Images/CodeCraftedCoverLogo.png)
+![icon](https://github.com/lingyundai/CodeCraftedCover/blob/main/Images/CodeCraftedCoverLogo.png)
 <p align="center">
 Next-Gen Cover Letter Generator with LLM & Snowflake.
 
