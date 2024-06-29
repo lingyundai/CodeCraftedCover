@@ -4,7 +4,7 @@
 
 <h3 align="center">Better Cover Letter Generator</h3>
 <p align="center">
-No more lousy cover letters!!
+Next-Gen Cover Letter Generator with LLM & Snowflake.
 
 <br/>
 <br/>
